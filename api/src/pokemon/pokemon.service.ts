@@ -1,11 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Generation } from 'src/schemas/generation.schema';
+import { Model } from 'mongoose';
+import { Type } from 'src/schemas/type.schema';
+import { PokemonList } from 'src/schemas/pokemon_list.schema';
+import axios from 'axios';
 
 @Injectable()
 export class PokemonService {
-  create(createPokemonDto: CreatePokemonDto) {
-    return 'This action adds a new pokemon';
+  constructor(
+    @InjectModel(Generation.name) private _Generation: Model<Generation>,
+    @InjectModel(Type.name) private _Type: Model<Type>,
+    @InjectModel(PokemonList.name) private _PokemonList: Model<PokemonList>,
+  ) {}
+
+  async create() {
+    const datos = require('../../datos.json');
+    //console.log(datos);
+    await this._PokemonList.insertMany(datos);
+    return 'listo';
   }
 
   findAll() {
