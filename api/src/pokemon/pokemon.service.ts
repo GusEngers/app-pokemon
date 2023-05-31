@@ -31,21 +31,26 @@ export class PokemonService {
     return 'listo';
   }
 
-  async findAll(page: number = 1) {
-    const pokemons = await this._PokemonList
-      .find({})
-      .skip((page - 1) * 20)
-      .limit(20)
-      .select('-__v')
-      .populate([
+  async findAll() {
+    try {
+      const aggregation = await this._PokemonList
+        .aggregate([{ $sample: { size: 20 } }])
+        .project({ __v: 0 });
+      const pokemons = await this._PokemonList.populate(aggregation, [
         { path: 'types', select: '-__v' },
         { path: 'generation', select: '-__v' },
       ]);
-    const count = await this.counts(this._PokemonList, {});
-    return {
-      count,
-      pokemons,
-    };
+      const count = await this.counts(this._PokemonList, {});
+      return {
+        count,
+        pokemons,
+      };
+    } catch (_) {
+      throw new HttpException(
+        '¡Lo sentimos! Ha ocurrido un error inesperado.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   async findOne(id: string, original: boolean) {
@@ -55,7 +60,7 @@ export class PokemonService {
         .then((res) => res.data)
         .catch((_) => {
           throw new HttpException(
-            'No se ha encontrado el pokemon solicitado',
+            '¡Lo sentimos! No se ha encontrado el pokemon solicitado.',
             HttpStatus.NOT_FOUND,
           );
         });
