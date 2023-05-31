@@ -25,14 +25,14 @@ export class PokemonList {
   image: string;
 
   @Prop({
-    required: true
+    required: true,
   })
-  attack: number
+  attack: number;
 
   @Prop({
-    required: true
+    required: true,
   })
-  defense: number
+  defense: number;
 
   @Prop({
     ref: 'Type',
@@ -55,25 +55,23 @@ export class PokemonList {
   types: Type[];
 
   @Prop({
-    // ref: 'Generation',
-    // default: "6472b1761e4b275718aa13ec",
-    // validate: [
-    //   {
-    //     validator: function (generation: string) {
-    //       return generation.length > 0;
-    //     },
-    //     msg: 'Es necesario ingresar la generación a la cual pertenece el pokemon.',
-    //   },
-    //   {
-    //     validator: function (generation: string) {
-    //       return isObjectIdOrHexString(generation);
-    //     },
-    //     msg: 'El formato del id ingresado no es válido. El formato correcto es de una cadena hexadecimal.',
-    //   },
-    // ],
-    required: true
+    ref: 'Generation',
+    validate: [
+      {
+        validator: function (generation: string) {
+          return generation.length > 0;
+        },
+        msg: 'Es necesario ingresar la generación a la cual pertenece el pokemon.',
+      },
+      {
+        validator: function (generation: string) {
+          return isObjectIdOrHexString(generation);
+        },
+        msg: 'El formato del id ingresado no es válido. El formato correcto es de una cadena hexadecimal.',
+      },
+    ],
   })
-  generation:  string // Generation;
+  generation: Generation[];
 
   @Prop({
     default: true,

@@ -3,10 +3,9 @@ import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Generation } from 'src/schemas/generation.schema';
-import { Model } from 'mongoose';
+import { Document, Model, Types } from 'mongoose';
 import { Type } from 'src/schemas/type.schema';
 import { PokemonList } from 'src/schemas/pokemon_list.schema';
-import axios from 'axios';
 
 @Injectable()
 export class PokemonService {
@@ -16,6 +15,14 @@ export class PokemonService {
     @InjectModel(PokemonList.name) private _PokemonList: Model<PokemonList>,
   ) {}
 
+  private async counts(
+    model: Model<PokemonList | Type | Generation>,
+    filter: {},
+  ) {
+    const result = await model.count(filter);
+    return result;
+  }
+
   async create() {
     const datos = require('../../datos.json');
     //console.log(datos);
@@ -23,8 +30,21 @@ export class PokemonService {
     return 'listo';
   }
 
-  findAll() {
-    return `This action returns all pokemon`;
+  async findAll(page: number = 1) {
+    const pokemons = await this._PokemonList
+      .find({})
+      .skip((page - 1) * 20)
+      .limit(20)
+      .select('-__v')
+      .populate([
+        { path: 'types', select: '-__v' },
+        { path: 'generation', select: '-__v' },
+      ]);
+    const count = await this.counts(this._PokemonList, {});
+    return {
+      count,
+      pokemons,
+    };
   }
 
   findOne(id: number) {
