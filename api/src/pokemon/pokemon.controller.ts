@@ -29,8 +29,9 @@ export class PokemonController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.pokemonService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const response = await this.pokemonService.findOne(id, true);
+    return response;
   }
 
   @Patch(':id')
