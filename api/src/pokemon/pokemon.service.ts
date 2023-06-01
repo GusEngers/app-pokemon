@@ -35,7 +35,7 @@ export class PokemonService {
     try {
       const aggregation = await this._PokemonList
         .aggregate([{ $sample: { size: 20 } }])
-        .project({_id: 0, __v: 0 });
+        .project({ _id: 0, __v: 0 });
       const pokemons = await this._PokemonList.populate(aggregation, [
         { path: 'types', select: '-__v' },
         { path: 'generation', select: '-__v' },
@@ -79,6 +79,56 @@ export class PokemonService {
     //     HttpStatus.NOT_FOUND,
     //   );
     // return pokemon;
+  }
+
+  async findByGeneration(generation: string, page: number = 1) {
+    try {
+      let pokemons = await this._PokemonList
+        .find({ generation })
+        .sort({ _id: 1 })
+        .skip((page - 1) * 20)
+        .limit(20)
+        .select('-__v -_id')
+        .populate([
+          { path: 'types', select: '-__v' },
+          { path: 'generation', select: '-__v' },
+        ]);
+      let count = await this.counts(this._PokemonList, { generation });
+      return {
+        count,
+        pokemons,
+      };
+    } catch (_) {
+      throw new HttpException(
+        '¡Lo sentimos! Ha ocurrido un error inesperado.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async findByName(generation: string, name: string, page: number = 1) {
+    try {
+      let pokemons = await this._PokemonList
+        .find({ generation, name: new RegExp(name, 'i') })
+        .sort({ _id: 1 })
+        .skip((page - 1) * 20)
+        .limit(20)
+        .select('-__v -_id')
+        .populate([
+          { path: 'types', select: '-__v' },
+          { path: 'generation', select: '-__v' },
+        ]);
+      let count = await this.counts(this._PokemonList, { generation, name: new RegExp(name, 'i') });
+      return {
+        count,
+        pokemons,
+      };
+    } catch (_) {
+      throw new HttpException(
+        '¡Lo sentimos! Ha ocurrido un error inesperado.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   update(id: number, updatePokemonDto: UpdatePokemonDto) {
