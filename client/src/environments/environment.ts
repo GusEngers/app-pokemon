@@ -1,3 +1,3 @@
 export const environment = {
-  api: "http://localhost:3001",
+  api: 'https://app-pokemon-hs4g.onrender.com',
 };

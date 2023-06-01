@@ -1,0 +1,8 @@
+<ng-container *ngIf="isHome; else notHome">
+  <nav>
+    <h1>Estamos en home</h1>
+  </nav>
+</ng-container>
+<ng-template #notHome>
+  <h1>No estamos en home</h1>
+</ng-template>

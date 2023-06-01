@@ -4,8 +4,8 @@ import { NoPreloading, RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    pathMatch: 'full',
-    redirectTo: 'home',
+    loadChildren: () =>
+      import('./pages/landing/landing.module').then((mod) => mod.LandingModule),
   },
   {
     path: 'home',
