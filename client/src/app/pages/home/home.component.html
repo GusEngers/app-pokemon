@@ -1,0 +1,18 @@
+<h1>Pokemon Home</h1>
+<ng-container *ngIf="error != null; else fallo" >
+  <p>estoy en error</p>
+  <h1>{{error}}</h1>
+</ng-container>
+<ng-template #fallo>
+  <ng-container *ngIf="loading; else cargando">
+    <h1>cargandoooo...</h1>
+  </ng-container>
+  <ng-template #cargando>
+    <h2>Total de pokemons</h2>
+    <p>{{ count }}</p>
+    <div *ngFor="let pokemon of pokemons">
+      <h1>{{ pokemon.name }}</h1>
+      <img src="{{ pokemon.image }}" alt="{{pokemon.name}}" />
+    </div>
+  </ng-template>
+</ng-template>

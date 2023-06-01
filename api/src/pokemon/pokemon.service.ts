@@ -35,7 +35,7 @@ export class PokemonService {
     try {
       const aggregation = await this._PokemonList
         .aggregate([{ $sample: { size: 20 } }])
-        .project({ __v: 0 });
+        .project({_id: 0, __v: 0 });
       const pokemons = await this._PokemonList.populate(aggregation, [
         { path: 'types', select: '-__v' },
         { path: 'generation', select: '-__v' },
