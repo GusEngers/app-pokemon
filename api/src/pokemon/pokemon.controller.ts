@@ -11,6 +11,7 @@ import {
 import { PokemonService } from './pokemon.service';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
+import { TOptions } from './types/pokemon.types';
 
 @Controller('pokemon')
 export class PokemonController {
@@ -28,7 +29,13 @@ export class PokemonController {
     return response;
   }
 
-  @Get(':generation')
+  @Get('generations')
+  async generations() {
+    const response = await this.pokemonService.generations();
+    return response;
+  }
+
+  @Get('generations/:generation')
   async findByGeneration(
     @Param('generation') generation: string,
     @Query('page') page: string,
@@ -40,24 +47,21 @@ export class PokemonController {
     return response;
   }
 
-  @Get(':generation/name')
-  async findByName(
-    @Body('name') name: string,
+  @Get('filter/:generation/options')
+  async filter(
     @Param('generation') generation: string,
+    @Body('name') name: string,
+    @Body('options') options: TOptions,
     @Query('page') page: string,
   ) {
-    const response = await this.pokemonService.findByName(
-      generation,
-      name,
+    const response = await this.pokemonService.filter(
+      (generation = generation),
+      (name = name),
+      (options = options),
       +page,
     );
     return response;
   }
-  // @Get(':id')
-  // async findOne(@Param('id') id: string) {
-  //   const response = await this.pokemonService.findOne(id, true);
-  //   return response;
-  // }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePokemonDto: UpdatePokemonDto) {

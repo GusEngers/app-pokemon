@@ -7,6 +7,7 @@ import { Model } from 'mongoose';
 import { Type } from 'src/schemas/type.schema';
 import { PokemonList } from 'src/schemas/pokemon_list.schema';
 import axios from 'axios';
+import { TOptions } from './types/pokemon.types';
 
 @Injectable()
 export class PokemonService {
@@ -81,6 +82,18 @@ export class PokemonService {
     // return pokemon;
   }
 
+  async generations() {
+    try {
+      let generations = await this._Generation.find({}).select('-__v');
+      return generations;
+    } catch (_) {
+      throw new HttpException(
+        '¡Lo sentimos! Ha ocurrido un error inesperado.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
   async findByGeneration(generation: string, page: number = 1) {
     try {
       let pokemons = await this._PokemonList
@@ -106,11 +119,16 @@ export class PokemonService {
     }
   }
 
-  async findByName(generation: string, name: string, page: number = 1) {
+  async filter(
+    generation: string,
+    name: string = '',
+    options: TOptions = { _id: 1 },
+    page: number = 1,
+  ) {
     try {
       let pokemons = await this._PokemonList
         .find({ generation, name: new RegExp(name, 'i') })
-        .sort({ _id: 1 })
+        .sort(options)
         .skip((page - 1) * 20)
         .limit(20)
         .select('-__v -_id')
@@ -118,7 +136,10 @@ export class PokemonService {
           { path: 'types', select: '-__v' },
           { path: 'generation', select: '-__v' },
         ]);
-      let count = await this.counts(this._PokemonList, { generation, name: new RegExp(name, 'i') });
+      let count = await this.counts(this._PokemonList, {
+        generation,
+        name: new RegExp(name, 'i'),
+      });
       return {
         count,
         pokemons,
