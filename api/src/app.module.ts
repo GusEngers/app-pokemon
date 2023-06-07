@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { PokemonModule } from './pokemon/pokemon.module';
 import { AuthModule } from './auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { GenerationModule } from './generation/generation.module';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
@@ -14,6 +15,7 @@ dotenv.config();
     ),
     PokemonModule,
     AuthModule,
+    GenerationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
