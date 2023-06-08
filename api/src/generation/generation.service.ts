@@ -16,7 +16,7 @@ export class GenerationService {
       const generation = new this._Generation(createGenerationDto);
       await generation.save();
       return {
-        msg: '¡Generación creada correctamente!',
+        msg: '¡Nueva generación creada correctamente!',
         data: generation,
       };
     } catch (error: any) {

@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { GenerationModule } from './generation/generation.module';
 import { FilterModule } from './filter/filter.module';
+import { TypeModule } from './type/type.module';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
@@ -18,6 +19,7 @@ dotenv.config();
     AuthModule,
     GenerationModule,
     FilterModule,
+    TypeModule,
   ],
   controllers: [AppController],
   providers: [AppService],
