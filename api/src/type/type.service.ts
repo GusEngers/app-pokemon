@@ -14,7 +14,7 @@ export class TypeService {
       const type = new this._Type(createTypeDto);
       await type.save();
       return {
-        msg: '¡Nuevo tipo de pokemon creado correctamente!',
+        msg: `¡Tipo "${type.name}" creado correctamente!`,
         data: type,
       };
     } catch (error: any) {
@@ -40,8 +40,19 @@ export class TypeService {
         .findByIdAndUpdate(id, updateTypeDto, { new: true })
         .select('-__v');
       return {
-        msg: '¡Tipo de pokemon actualizado correctamente!',
+        msg: `¡Tipo "${type?.name}" actualizado correctamente!`,
         data: type,
+      };
+    } catch (error: any) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  async delete(id: string) {
+    try {
+      const type = await this._Type.findByIdAndDelete(id);
+      return {
+        msg: `¡Tipo "${type?.name}" eliminado correctamente!`,
       };
     } catch (error: any) {
       throw new HttpException(error.message, error.statusCode);
