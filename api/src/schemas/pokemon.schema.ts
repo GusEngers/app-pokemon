@@ -3,10 +3,10 @@ import { HydratedDocument, isObjectIdOrHexString } from 'mongoose';
 import { Type } from './type.schema';
 import { Generation } from './generation.schema';
 
-export type PokemonListDocument = HydratedDocument<PokemonList>;
+export type PokemonDocument = HydratedDocument<Pokemon>;
 
 @Schema()
-export class PokemonList {
+export class Pokemon {
   @Prop({
     required: true,
     unique: true,
@@ -79,4 +79,4 @@ export class PokemonList {
   original: boolean;
 }
 
-export const PokemonListSchema = SchemaFactory.createForClass(PokemonList);
+export const PokemonSchema = SchemaFactory.createForClass(Pokemon);
