@@ -26,4 +26,10 @@ export class PokemonController {
     const response = await this.SPokemon.detail(id, original);
     return response;
   }
+
+  @Get('name/:name')
+  async search(@Param('name') name: string, @Query('page') page: string) {
+    const response = await this.SPokemon.search(name.toLowerCase(), +page);
+    return response;
+  }
 }

@@ -74,8 +74,9 @@ export class PokemonService {
    * * Obtiene el detalle de un pokemon, si es original los resultados vienen desde
    * una API externa y en caso contrario vienen desde la base de datos.
    * * En casos de errores devuelen sus respectivos mensajes.
-   * @param id 
-   * @param original 
+   * @param id Id del pokemon requerido para obtener sus detalles
+   * @param original Objeto con la propiedad original que determina si se está buscando
+   * un pokemon de la api o uno creado en la base de datos
    */
   async detail(id: string, original: Original) {
     try {
@@ -89,7 +90,10 @@ export class PokemonService {
         return pokemon;
       }
 
-      const pokemon = await this.MPokemon.findOne({ pokedex_id: id })
+      const pokemon = await this.MPokemon.findOne({
+        pokedex_id: id,
+        ...original,
+      })
         .select('-__v')
         .populate([
           { path: 'types', select: '-__v' },
@@ -103,6 +107,38 @@ export class PokemonService {
         err.message !== 'Error'
           ? '¡Lo sentimos! Ha ocurrido un error inesperado.'
           : '¡Lo sentimos! No hay registros de este pokemon';
+      throw new HttpException(message, err.status || HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  /**
+   * * Obtiene una lista de pokemons según su nombre o fragmento de texto y también la cantidad de pokemons
+   * que se encuentran según dicho texto.
+   * * En casos de errores devuelen sus respectivos mensajes.
+   * @param name Nombre del pokemon a buscar
+   * @param page Número de página a filtrar (Máximo 20 registros por página), por defecto su valor es 1
+   */
+  async search(name: string, page: number = 1) {
+    try {
+      const pokemons = await this.MPokemon.find({ name: new RegExp(name, 'i') })
+        .select('-__v')
+        .skip((page - 1) * 20)
+        .limit(20)
+        .sort({ _id: 1 })
+        .populate([
+          { path: 'types', select: '-__v' },
+          { path: 'generation', select: '-__v' },
+        ]);
+
+      if (!pokemons || !pokemons.length)
+        throw new HttpException('Error', HttpStatus.NOT_FOUND);
+      const count = await this.MPokemon.count({ name: new RegExp(name, 'i') });
+      return { count, pokemons };
+    } catch (err) {
+      let message =
+        err.message !== 'Error'
+          ? '¡Lo sentimos! Ha ocurrido un error inesperado.'
+          : `¡Lo sentimos! No hay más registros del pokemon '${name.toUpperCase()}'.`;
       throw new HttpException(message, err.status || HttpStatus.BAD_REQUEST);
     }
   }
