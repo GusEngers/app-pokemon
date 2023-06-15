@@ -21,6 +21,6 @@ export class PokemonModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(CheckIdMiddleware, CheckGenerationMiddleware)
-      .forRoutes('pokemon/:generation');
+      .forRoutes('pokemon/generation/:generation');
   }
 }
