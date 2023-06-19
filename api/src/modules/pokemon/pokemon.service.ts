@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import axios from 'axios';
 import { Model } from 'mongoose';
-import { Original } from 'src/global/types/pokemon.type';
+import { Detail, Name } from 'src/global/types/pokemon.type';
 import { Pokemon } from 'src/schemas/pokemon.schema';
 
 @Injectable()
@@ -78,9 +78,9 @@ export class PokemonService {
    * @param original Objeto con la propiedad original que determina si se está buscando
    * un pokemon de la api o uno creado en la base de datos
    */
-  async detail(id: string, original: Original) {
+  async detail({ id, original }: Detail) {
     try {
-      if (original.original) {
+      if (original) {
         const pokemon = await axios
           .get(this.api + id)
           .then((res) => res.data)
@@ -92,7 +92,7 @@ export class PokemonService {
 
       const pokemon = await this.MPokemon.findOne({
         pokedex_id: id,
-        ...original,
+        original,
       })
         .select('-__v')
         .populate([
@@ -118,7 +118,7 @@ export class PokemonService {
    * @param name Nombre del pokemon a buscar
    * @param page Número de página a filtrar (Máximo 20 registros por página), por defecto su valor es 1
    */
-  async search(name: string, page: number = 1) {
+  async search({ name }: Name, page: number = 1) {
     try {
       const pokemons = await this.MPokemon.find({ name: new RegExp(name, 'i') })
         .select('-__v')

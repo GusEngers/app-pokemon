@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Query } from '@nestjs/common';
 import { PokemonService } from './pokemon.service';
-import { Original } from 'src/global/types/pokemon.type';
+import { Detail, Name } from 'src/global/types/pokemon.type';
 
 @Controller('pokemon')
 export class PokemonController {
@@ -21,15 +21,15 @@ export class PokemonController {
     return response;
   }
 
-  @Get('detail/:id')
-  async detail(@Param('id') id: string, @Body() original: Original) {
-    const response = await this.SPokemon.detail(id, original);
+  @Get('detail')
+  async detail(@Body() detail: Detail) {
+    const response = await this.SPokemon.detail(detail);
     return response;
   }
 
-  @Get('name/:name')
-  async search(@Param('name') name: string, @Query('page') page: string) {
-    const response = await this.SPokemon.search(name.toLowerCase(), +page);
+  @Get('name')
+  async search(@Body() name: Name, @Query('page') page: string) {
+    const response = await this.SPokemon.search(name, +page);
     return response;
   }
 }
