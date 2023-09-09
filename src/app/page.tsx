@@ -2,7 +2,7 @@ import Link from 'next/link';
 import styles from './page.module.css';
 import Image from 'next/image';
 
-export default function Home() {
+export default function Page() {
   return (
     <main className={styles.main}>
       <Image alt='Logo Start' src={'/logo-1.png'} width={600} height={300} />
