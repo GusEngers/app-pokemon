@@ -1,16 +1,16 @@
 async function getData() {
-  const data: Promise<string> = new Promise((resolve) => {
-    setTimeout(() => resolve('Hola Mundo'), 10000);
-  });
+  const data = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api`);
 
-  const res = await data.then((res) => res);
-  return res;
+  return data.json();
 }
 
 async function Ejemplo() {
   const data = await getData();
 
-  return <h1>{data}</h1>;
+  return (
+  <div>
+    <h1>holada</h1>
+  </div>)
 }
 
 export default Ejemplo;
