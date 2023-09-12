@@ -1,16 +1,25 @@
 import { NextResponse, NextRequest } from 'next/server';
-import { ListTypesQuery } from './query';
 const API = 'https://beta.pokeapi.co/graphql/v1beta';
 
+const query = `
+query ListTypes {
+  data: pokemon_v2_type_aggregate {
+    nodes {
+      name
+      id
+    }
+  }
+}`;
+
 export async function GET() {
-  // let data = await fetch(API, {
-  //   method: 'POST',
-  //   body: JSON.stringify({
-  //     query: ListTypesQuery().query,
-  //     operationName: ListTypesQuery().operationName,
-  //   }),
-  // })
-  //   .then((res) => res.json())
-  //   .then((d) => d.data.data.nodes);
-  return NextResponse.json({hola:"hola mundo"});
+  let data = await fetch(API, {
+    method: 'POST',
+    body: JSON.stringify({
+      query: query,
+      operationName: 'ListTypes',
+    }),
+  })
+    .then((res) => res.json())
+    .then((d) => d.data.data.nodes);
+  return NextResponse.json(data);
 }
